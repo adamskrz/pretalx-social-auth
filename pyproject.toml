@@ -12,7 +12,10 @@ maintainers = [
   {name = "Adam Skrzymowski", email = "adam.skrzymowski@gmail.com"},
 ]
 
-dependencies = []
+dependencies = [
+  "django>=3.2",
+  "social-auth-core>=4.4.1"
+]
 
 [project.urls]
 homepage = "https://github.com/adamskrz/pretalx-social-auth"
