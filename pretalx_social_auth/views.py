@@ -12,7 +12,7 @@ from social_core.actions import do_auth, do_complete, do_disconnect
 from .forms import SocialAuthSettingsForm
 from .utils import maybe_require_post, psa
 
-NAMESPACE = "pretalx_social_auth"
+NAMESPACE = "plugins:pretalx_social_auth"
 
 # Calling `session.set_expiry(None)` results in a session lifetime equal to
 # platform default session lifetime.

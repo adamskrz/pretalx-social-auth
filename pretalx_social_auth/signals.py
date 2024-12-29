@@ -4,6 +4,8 @@ from django.urls import reverse
 from pretalx.common.signals import auth_html
 from pretalx.orga.signals import nav_event_settings
 
+from .utils import backends
+
 
 @receiver(nav_event_settings)
 def pretalx_social_auth_settings(sender, request, **kwargs):
@@ -23,7 +25,7 @@ def pretalx_social_auth_settings(sender, request, **kwargs):
 
 
 @receiver(auth_html)
-def render_login_auth_options(sender, **kwargs):
+def render_login_auth_options(sender, request, **kwargs):
     template = get_template("pretalx_social_auth/login.html")
-    html = template.render()
+    html = template.render(context=backends(request), request=request)
     return html
