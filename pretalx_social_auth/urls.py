@@ -1,7 +1,5 @@
-from django.conf import settings
 from django.urls import path, re_path
 from pretalx.event.models.event import SLUG_REGEX
-from social_core.utils import setting_name
 
 from . import views
 from .views import SocialAuthSettingsView
