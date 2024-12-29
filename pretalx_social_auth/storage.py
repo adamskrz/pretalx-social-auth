@@ -1,5 +1,3 @@
-"""Django ORM models for Social Auth"""
-
 import base64
 
 from django.core.exceptions import FieldDoesNotExist

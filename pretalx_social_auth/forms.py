@@ -1,4 +1,3 @@
-
 from i18nfield.forms import I18nModelForm
 
 from .models import SocialAuthSettings
@@ -12,6 +11,5 @@ class SocialAuthSettingsForm(I18nModelForm):
 
     class Meta:
         model = SocialAuthSettings
-        fields = ("some_setting", )
+        fields = ("some_setting",)
         widgets = {}
-
