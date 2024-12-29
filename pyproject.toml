@@ -1,0 +1,38 @@
+[project]
+name = "pretalx-social-auth"
+dynamic = ["version"]
+description = "pretalx plugin for Python Social Auth"
+readme = "README.rst"
+license = {text = "Apache Software License"}
+keywords = ["pretalx"]
+authors = [
+  {name = "Adam Skrzymowski", email = "adam.skrzymowski@gmail.com"},
+]
+maintainers = [
+  {name = "Adam Skrzymowski", email = "adam.skrzymowski@gmail.com"},
+]
+
+dependencies = []
+
+[project.urls]
+homepage = "https://github.com/adamskrz/pretalx-social-auth"
+repository = "https://github.com/adamskrz/pretalx-social-auth.git"
+
+[project.entry-points."pretalx.plugin"]
+pretalx_social_auth = "pretalx_social_auth:PretalxPluginMeta"
+
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "pretalx_social_auth.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["pretalx*"]
+
+[tool.check-manifest]
+ignore = [".*"]
