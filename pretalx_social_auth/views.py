@@ -14,7 +14,7 @@ from social_core.utils import setting_name
 from .forms import SocialAuthSettingsForm
 from .utils import maybe_require_post, psa
 
-NAMESPACE = getattr(settings, setting_name("URL_NAMESPACE"), None) or "social"
+NAMESPACE = "pretalx_social_auth"
 
 # Calling `session.set_expiry(None)` results in a session lifetime equal to
 # platform default session lifetime.
