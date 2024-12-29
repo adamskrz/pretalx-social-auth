@@ -1,10 +1,19 @@
-"""URLs module"""
-
 from django.conf import settings
-from django.urls import path
+from django.urls import path, re_path
+from pretalx.event.models.event import SLUG_REGEX
 from social_core.utils import setting_name
 
 from . import views
+from .views import SocialAuthSettingsView
+
+urlpatterns = [
+    re_path(
+        rf"^orga/event/(?P<event>{SLUG_REGEX})/settings/p/pretalx_social_auth/$",
+        SocialAuthSettingsView.as_view(),
+        name="settings",
+    ),
+]
+
 
 extra = getattr(settings, setting_name("TRAILING_SLASH"), True) and "/" or ""
 

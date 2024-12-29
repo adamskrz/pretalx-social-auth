@@ -1,5 +1,3 @@
-"""Django ORM models for Social Auth"""
-
 from typing import Union
 
 from django.conf import settings
@@ -33,6 +31,15 @@ ASSOCIATION_SERVER_URL_LENGTH = getattr(
 ASSOCIATION_HANDLE_LENGTH = getattr(
     settings, setting_name("ASSOCIATION_HANDLE_LENGTH"), 255
 )
+
+
+class SocialAuthSettings(models.Model):
+    event = models.OneToOneField(
+        to="event.Event",
+        on_delete=models.CASCADE,
+        related_name="pretalx_social_auth_settings",
+    )
+    some_setting = models.CharField(max_length=10, default="A")
 
 
 class AbstractUserSocialAuth(models.Model, DjangoUserMixin):
