@@ -1,10 +1,8 @@
-
 from django.dispatch import receiver
-from django.urls import reverse
 from django.template.loader import get_template
-
-from pretalx.orga.signals import nav_event_settings
+from django.urls import reverse
 from pretalx.common.signals import auth_html
+from pretalx.orga.signals import nav_event_settings
 
 
 @receiver(nav_event_settings)
@@ -22,6 +20,7 @@ def pretalx_social_auth_settings(sender, request, **kwargs):
             == "plugins:pretalx_social_auth:settings",
         }
     ]
+
 
 @receiver(auth_html)
 def render_login_auth_options(sender, **kwargs):
