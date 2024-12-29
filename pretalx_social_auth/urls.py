@@ -8,25 +8,21 @@ from .views import SocialAuthSettingsView
 
 urlpatterns = [
     re_path(
-        rf"^orga/event/(?P<event>{SLUG_REGEX})/settings/p/pretalx_social_auth/$",
+        rf"^orga/event/(?P<event>{SLUG_REGEX})/settings/p/social_auth/$",
         SocialAuthSettingsView.as_view(),
         name="settings",
     ),
-]
-
-
-extra = getattr(settings, setting_name("TRAILING_SLASH"), True) and "/" or ""
-
-app_name = "social"
-
-urlpatterns = [
     # authentication / association
-    path(f"login/<str:backend>{extra}", views.auth, name="begin"),
-    path(f"complete/<str:backend>{extra}", views.complete, name="complete"),
+    path("p/social_auth/login/<str:backend>/", views.auth, name="begin"),
+    path("p/social_auth/complete/<str:backend>/", views.complete, name="complete"),
     # disconnection
-    path(f"disconnect/<str:backend>{extra}", views.disconnect, name="disconnect"),
     path(
-        f"disconnect/<str:backend>/<int:association_id>{extra}",
+        "p/social_auth/disconnect/<str:backend>/",
+        views.disconnect,
+        name="disconnect",
+    ),
+    path(
+        "p/social_auth/disconnect/<str:backend>/<int:association_id>/",
         views.disconnect,
         name="disconnect_individual",
     ),
