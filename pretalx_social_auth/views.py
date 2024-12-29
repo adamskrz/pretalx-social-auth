@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME, login
 from django.contrib.auth.decorators import login_required
@@ -9,7 +8,6 @@ from django.views.decorators.http import require_POST
 from django.views.generic import FormView
 from pretalx.common.views.mixins import PermissionRequired
 from social_core.actions import do_auth, do_complete, do_disconnect
-from social_core.utils import setting_name
 
 from .forms import SocialAuthSettingsForm
 from .utils import maybe_require_post, psa
