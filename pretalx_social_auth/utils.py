@@ -1,17 +1,21 @@
 from functools import wraps
+from urllib.parse import quote
 
 from django.conf import settings
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.http import Http404
+from django.http.multipartparser import MultiPartParserError
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from social_core.backends.utils import user_backends_data
 from social_core.exceptions import MissingBackend
 from social_core.utils import get_strategy, module_member, setting_name
 
 STRATEGY = getattr(
-    settings, setting_name("STRATEGY"), "social_django.strategy.DjangoStrategy"
+    settings, setting_name("STRATEGY"), "pretalx_social_auth.strategy.DjangoStrategy"
 )
 STORAGE = getattr(
-    settings, setting_name("STORAGE"), "social_django.models.DjangoStorage"
+    settings, setting_name("STORAGE"), "pretalx_social_auth.models.DjangoStorage"
 )
 REQUIRE_POST = setting_name("REQUIRE_POST")
 
@@ -63,3 +67,37 @@ def maybe_require_post(func):
         return func(request, backend, *args, **kwargs)
 
     return wrapper
+
+
+def backends(request):
+    """Load Social Auth current user data to context under the key 'backends'.
+    Will return the output of social_core.backends.utils.user_backends_data."""
+    return {
+        "backends": user_backends_data(
+            request.user, settings.AUTHENTICATION_BACKENDS, Storage
+        )
+    }
+
+
+def login_redirect(request):
+    """Load current redirect to context."""
+    try:
+        value = (
+            request.method == "POST"
+            and request.POST.get(REDIRECT_FIELD_NAME)
+            or request.GET.get(REDIRECT_FIELD_NAME)
+        )
+    except MultiPartParserError:
+        # request POST may be malformed
+        value = None
+    if value:
+        value = quote(value)
+        querystring = REDIRECT_FIELD_NAME + "=" + value
+    else:
+        querystring = ""
+
+    return {
+        "REDIRECT_FIELD_NAME": REDIRECT_FIELD_NAME,
+        "REDIRECT_FIELD_VALUE": value,
+        "REDIRECT_QUERYSTRING": querystring,
+    }
