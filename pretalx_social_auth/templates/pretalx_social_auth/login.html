@@ -1,8 +1,7 @@
 {% load i18n %}
 <div class="auth-form-block">
     <h4 class="text-center">{% translate "Login with:" %}</h4>
-    Extra methods!
     {% for backend in backends.backends %}
-        <a href="{% url "plugins:pretalx_social_auth:begin" backend %}">{{ backend }}</a>
+        <a class="btn btn-lg btn-success btn-block" href="{% url "plugins:pretalx_social_auth:begin" backend %}">{{ backend }}</a>
     {% endfor %}
 </div>
