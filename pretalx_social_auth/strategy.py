@@ -12,6 +12,13 @@ from django.utils.translation import get_language
 from social_core.strategy import BaseStrategy, BaseTemplateStrategy
 
 
+EXTRA_SETTINGS = {
+    "USER_FIELD_MAPPING": {
+        "fullname": "name"
+    },
+    "IMMUTABLE_USER_FIELDS": ["name"],
+}
+
 def render_template_string(request, html, context=None):
     """Take a template in the form of a string and render it for the
     given context"""
@@ -37,7 +44,7 @@ class DjangoStrategy(BaseStrategy):
         super().__init__(storage, tpl)
 
     def get_setting(self, name):
-        value = getattr(settings, name)
+        value = EXTRA_SETTINGS.get(name) or getattr(settings, name)
         # Force text on URL named settings that are instance of Promise
         if name.endswith("_URL"):
             if isinstance(value, Promise):
