@@ -7,7 +7,8 @@ from django.http import Http404
 from django.http.multipartparser import MultiPartParserError
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from social_core.backends.utils import user_backends_data
+from social_core.backends.base import BaseAuth
+from social_core.backends.utils import load_backends, user_backends_data
 from social_core.exceptions import MissingBackend
 from social_core.utils import get_strategy, module_member, setting_name
 
@@ -69,14 +70,29 @@ def maybe_require_post(func):
     return wrapper
 
 
-def backends(request):
-    """Load Social Auth current user data to context under the key 'backends'.
-    Will return the output of social_core.backends.utils.user_backends_data."""
-    return {
-        "backends": user_backends_data(
-            request.user, settings.AUTHENTICATION_BACKENDS, Storage
-        )
-    }
+def backend_friendly_name(backend: BaseAuth) -> str:
+    """Return the friendly name of a backend. If the friendly name is not known, return the name."""
+    name_mapping = load_strategy().get_setting("BACKEND_NAME_MAPPING")
+    class_name = backend.name
+    return getattr(backend, "friendly_name", name_mapping.get(class_name, class_name))
+
+
+def user_backends(request):
+    """
+    Dictionary with the following keys:
+        associated: UserSocialAuth model instances for currently associated
+                    accounts
+        not_associated: Not associated (yet) backend names
+        backends: All backend names.
+
+    Wrapper around social_core.backends.utils.user_backends_data.
+    """
+    return user_backends_data(request.user, settings.AUTHENTICATION_BACKENDS, Storage)
+
+
+def all_backends():
+    """Return all configured backends. Dictionary with class name as key and backend class as value."""
+    return load_backends(settings.AUTHENTICATION_BACKENDS)
 
 
 def login_redirect(request):

@@ -11,13 +11,25 @@ from django.utils.functional import Promise
 from django.utils.translation import get_language
 from social_core.strategy import BaseStrategy, BaseTemplateStrategy
 
-
 EXTRA_SETTINGS = {
-    "USER_FIELD_MAPPING": {
-        "fullname": "name"
-    },
+    "USER_FIELD_MAPPING": {"fullname": "name"},
     "IMMUTABLE_USER_FIELDS": ["name"],
+    "BACKEND_NAME_MAPPING": {
+        "discord": "Discord",
+        "discourse": "Discourse",
+        "github": "GitHub",
+        "google-oauth2": "Google",
+        "google-openidconnect": "Google",
+        "gitlab": "GitLab",
+        "slack": "Slack",
+        "microsoft-graph": "Microsoft",
+    },
 }
+
+EXTRA_SETTINGS.update(
+    getattr(settings, "PLUGIN_SETTINGS", {}).get("pretalx_social_auth", {})
+)
+
 
 def render_template_string(request, html, context=None):
     """Take a template in the form of a string and render it for the
