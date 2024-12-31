@@ -3,6 +3,7 @@ from django.template.loader import get_template
 from django.urls import reverse
 from pretalx.common.signals import auth_html
 from pretalx.orga.signals import nav_event_settings
+from pretalx.person.signals import deactivate_user
 
 from .utils import backends
 
@@ -25,7 +26,20 @@ def pretalx_social_auth_settings(sender, request, **kwargs):
 
 
 @receiver(auth_html)
-def render_login_auth_options(sender, request, **kwargs):
+def render_login_auth_options(sender, request, next_url=None, **kwargs):
+    print("render_login_auth_options")
+    context = backends(request)
+    context["url_params"] = ""
+
+    next_path = request.GET.get("next", next_url)
+    if next_path:
+        context["url_params"] = f"?next={next_path}"
+
     template = get_template("pretalx_social_auth/login.html")
-    html = template.render(context=backends(request), request=request)
+    html = template.render(context=context, request=request)
     return html
+
+
+@receiver(deactivate_user)
+def delete_user_data(sender, user, **kwargs):
+    user.social_auth.all().delete()
