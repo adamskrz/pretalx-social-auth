@@ -13,6 +13,24 @@ Originally based on [social_django](https://github.com/python-social-auth/social
 
 ## Configuration
 
+In your `pretalx.cfg` file, add all the auth backends you need as a comma-separated list. Then, add the backend-specific settings to the `[plugin:pretalx_social_auth]` section. You can find the backend name and required settings in the [python-social-auth documentation](https://python-social-auth.readthedocs.io/en/latest/backends/index.html).
+
+Example:
+
+```ini
+[project.entry-points."pretalx.plugin"]
+pretalx_social_auth = "pretalx_social_auth:PretalxPluginMeta"
+
+[authentication]
+additional_auth_backends=social_core.backends.microsoft.MicrosoftOAuth2,social_core.backends.open_id.OpenIdAuth
+
+[plugin:pretalx_social_auth]
+SOCIAL_AUTH_MICROSOFT_GRAPH_KEY=xxxxx-xxxxx-xxxxx-xxxxx-xxxxxxxxxx
+SOCIAL_AUTH_MICROSOFT_GRAPH_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+Instructions on adding custom backends will be added in the future.
+
 Due to how Social Auth is configured with API keys in `settings.py`, this doesn't support configuring providers (backends) on a per-event basis. This means particular care should be taken where custom event domains are in use, as some providers require a different API key per domain (or adding valid redirect URLs).
 
 I initially looked into using [django-allauth](https://github.com/pennersr/django-allauth) instead, which allows configuring providers in the database on a per-site basis, but it also replaces the full auth model, so would be more difficult to make into a plugin!
@@ -34,15 +52,17 @@ I initially looked into using [django-allauth](https://github.com/pennersr/djang
 
 This plugin has CI set up to enforce a few code style rules. To check locally, you need these packages installed::
 
-    pip install flake8 flake8-bugbear isort black
+    pip install flake8 flake8-bugbear isort black djhtml
 
 To check your plugin for rule violations, run::
 
     black --check .
     isort -c .
+    djhtml -c .
     flake8 .
 
 You can auto-fix some of these issues by running::
 
     isort .
     black .
+    djhtml .
