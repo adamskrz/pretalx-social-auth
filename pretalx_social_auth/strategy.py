@@ -11,7 +11,7 @@ from django.utils.functional import Promise
 from django.utils.translation import get_language
 from social_core.strategy import BaseStrategy, BaseTemplateStrategy
 
-EXTRA_SETTINGS = {
+DEFAULT_SETTINGS = {
     "USER_FIELD_MAPPING": {"fullname": "name"},
     "IMMUTABLE_USER_FIELDS": ["name"],
     "BACKEND_NAME_MAPPING": {
@@ -26,9 +26,17 @@ EXTRA_SETTINGS = {
     },
 }
 
-EXTRA_SETTINGS.update(
-    getattr(settings, "PLUGIN_SETTINGS", {}).get("pretalx_social_auth", {})
+plugin_cfg_settings = getattr(settings, "PLUGIN_SETTINGS", {}).get(
+    "pretalx_social_auth", {}
 )
+plugin_settings = DEFAULT_SETTINGS.copy()
+# cfg file makes all settings lowercase, so we need to convert them back to uppercase, and merge them with the defaults
+for setting_lower, default in plugin_cfg_settings.items():
+    setting = setting_lower.upper()
+    if setting not in plugin_settings:
+        plugin_settings[setting] = default
+    else:
+        plugin_settings[setting].update(default)
 
 
 def render_template_string(request, html, context=None):
@@ -56,7 +64,9 @@ class DjangoStrategy(BaseStrategy):
         super().__init__(storage, tpl)
 
     def get_setting(self, name):
-        value = EXTRA_SETTINGS.get(name) or getattr(settings, name)
+        value = plugin_settings.get(name)
+        if value is None:
+            value = getattr(settings, name)
         # Force text on URL named settings that are instance of Promise
         if name.endswith("_URL"):
             if isinstance(value, Promise):
