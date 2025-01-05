@@ -3,14 +3,14 @@
     <h4>{% translate "Social Login Connections" %}</h4>
 
     {% for provider, connection in associated_accounts %}
-    <div class="row">
+        <div class="row">
 
-    Connected to {{ provider }}
-        <div class="col-md-4 flip ml-auto">
-            <a class="btn btn-block btn-danger btn-lg">
-                Disconnect
-            </a>
+            Connected to {{ provider }}
+            <div class="col-md-4 flip ml-auto">
+                <a class="btn btn-block btn-danger btn-lg">
+                    Disconnect
+                </a>
+            </div>
         </div>
-    </div>
     {% endfor %}
 </div>
