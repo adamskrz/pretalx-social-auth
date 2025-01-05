@@ -1,11 +1,11 @@
 from django.dispatch import receiver
 from django.template.loader import get_template
 from django.urls import reverse
-from pretalx.common.signals import auth_html
+from pretalx.common.signals import auth_html, profile_bottom_html
 from pretalx.orga.signals import nav_event_settings
 from pretalx.person.signals import deactivate_user
 
-from .utils import all_backends, backend_friendly_name
+from .utils import all_backends, backend_friendly_name, user_backends
 
 
 @receiver(nav_event_settings)
@@ -41,6 +41,19 @@ def render_login_auth_options(sender, request, next_url=None, **kwargs):
 
     template = get_template("pretalx_social_auth/login.html")
     html = template.render(context=context, request=request)
+    return html
+
+
+@receiver(profile_bottom_html)
+def render_user_options_backends(sender, user, **kwargs):
+    user_backend_data = user_backends(user)
+    context = {}
+    context["associated_accounts"] = [
+        (backend_friendly_name(assoc.provider), assoc)
+        for assoc in user_backend_data["associated"]
+    ]
+    template = get_template("pretalx_social_auth/profile_settings.html")
+    html = template.render(context=context)
     return html
 
 
