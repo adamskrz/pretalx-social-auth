@@ -3,7 +3,7 @@ from django.template.loader import get_template
 from django.urls import reverse
 from pretalx.common.signals import auth_html, profile_bottom_html
 from pretalx.orga.signals import nav_event_settings
-from pretalx.person.signals import deactivate_user
+from pretalx.person.signals import delete_user
 
 from .utils import all_backends, backend_friendly_name, user_backends
 
@@ -57,6 +57,6 @@ def render_user_options_backends(sender, user, **kwargs):
     return html
 
 
-@receiver(deactivate_user)
+@receiver(delete_user)
 def delete_user_data(sender, user, **kwargs):
     user.social_auth.all().delete()
