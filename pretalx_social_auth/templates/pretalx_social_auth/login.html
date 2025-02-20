@@ -1,5 +1,7 @@
 {% load i18n %}
-<hr>
-{% for backend, friendly in backends.items %}
-    <a class="btn btn-lg btn-info btn-block" href="{% url "plugins:pretalx_social_auth:begin" backend %}{{ url_params }}">Sign in with {{ friendly }}</a>
-{% endfor %}
+{% if backends|length > 0 %}
+    <hr>
+    {% for backend, friendly in backends.items %}
+        <a class="btn btn-lg btn-info btn-block" href="{% url "plugins:pretalx_social_auth:begin" backend %}{{ url_params }}">Sign in with {{ friendly }}</a>
+    {% endfor %}
+{% endif %}
