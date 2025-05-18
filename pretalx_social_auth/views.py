@@ -20,7 +20,7 @@ DEFAULT_SESSION_TIMEOUT = None
 
 
 class SocialAuthSettingsView(PermissionRequired, FormView):
-    permission_required = "orga.change_settings"
+    permission_required = "event.update_event"
     template_name = "pretalx_social_auth/settings.html"
     form_class = SocialAuthSettingsForm
 
