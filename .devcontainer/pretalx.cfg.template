@@ -1,0 +1,16 @@
+# This is a local configuration file to pre-configure pretalx for development inside the devcontainer.
+# Feel free to modify it for you local needs during development.
+# It serves as a "just works" baseline.
+[site]
+debug = True
+url = http://localhost:8000
+
+[authentication]
+additional_auth_backends=social_core.backends.open_id_connect.OpenIdConnectAuth
+
+[plugin:pretalx_social_auth]
+SOCIAL_AUTH_OIDC_OIDC_ENDPOINT =http://localhost:9400
+# These are dummy values for local development and will work with the local OIDC provider setup in this devcontainer.
+SOCIAL_AUTH_OIDC_KEY=local_client_id
+SOCIAL_AUTH_OIDC_SECRET=local_client_secret
+BACKEND_NAME_MAPPING={ "oidc": "Development OIDC" }
