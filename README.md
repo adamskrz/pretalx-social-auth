@@ -1,8 +1,5 @@
 # pretalx Social Auth plugin
 
-> [!CAUTION]
-> This plugin is still under development and not ready for production use. It also uses signals currently only existing in [my fork of pretalx](https://github.com/adamskrz/pretalx/tree/social-auth)
-
 This is a plugin for [pretalx](https://github.com/pretalx/pretalx). It provides an integration with [Python Social Auth](https://github.com/python-social-auth/social-core), allowing users to log in with third-party services.
 
 Originally based on [social_django](https://github.com/python-social-auth/social-app-django) from the Python Social Auth project, but with the removal of deprecated features and the addition of pretalx-specific settings.
@@ -32,6 +29,8 @@ SOCIAL_AUTH_MICROSOFT_GRAPH_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxx
 Instructions on adding custom backends will be added in the future.
 
 Due to how Social Auth is configured with API keys in `settings.py`, this doesn't support configuring providers (backends) on a per-event basis. This means particular care should be taken where custom event domains are in use, as some providers require a different API key per domain (or adding valid redirect URLs).
+
+If running pretalx behind a reverse proxy, consider adding `SOCIAL_AUTH_REDIRECT_IS_HTTPS = True` to have https redirect URLs.
 
 I initially looked into using [django-allauth](https://github.com/pennersr/django-allauth) instead, which allows configuring providers in the database on a per-site basis, but it also replaces the full auth model, so would be more difficult to make into a plugin!
 
