@@ -10,6 +10,7 @@ from django.utils.encoding import force_str
 from django.utils.functional import Promise
 from django.utils.translation import get_language
 from social_core.strategy import BaseStrategy, BaseTemplateStrategy
+import json
 
 DEFAULT_SETTINGS = {
     "USER_FIELD_MAPPING": {"fullname": "name"},
@@ -31,12 +32,20 @@ plugin_cfg_settings = getattr(settings, "PLUGIN_SETTINGS", {}).get(
 )
 plugin_settings = DEFAULT_SETTINGS.copy()
 # cfg file makes all settings lowercase, so we need to convert them back to uppercase, and merge them with the defaults
-for setting_lower, default in plugin_cfg_settings.items():
+for setting_lower, value in plugin_cfg_settings.items():
     setting = setting_lower.upper()
-    if setting not in plugin_settings:
-        plugin_settings[setting] = default
+    # Try to load JSON if value is a string and looks like JSON
+    if isinstance(value, str):
+        try:
+            loaded = json.loads(value)
+            value = loaded
+        except (json.JSONDecodeError, TypeError):
+            pass
+    # Merge dicts, otherwise override
+    if setting in plugin_settings and isinstance(plugin_settings[setting], dict) and isinstance(value, dict):
+        plugin_settings[setting].update(value)
     else:
-        plugin_settings[setting].update(default)
+        plugin_settings[setting] = value
 
 
 def render_template_string(request, html, context=None):

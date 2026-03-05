@@ -1,0 +1,15 @@
+services:
+  devcontainer:
+    image: ghcr.io/tjarbo/pretalx-devcontainer/devcontainer:main
+    network_mode: "service:oidc-provider-mock"
+    volumes:
+      - ../:/workspace:cached
+    command: sleep infinity
+  
+  oidc-provider-mock:
+    image: ghcr.io/tjarbo/oidc-provider-mock:f96d2559e57533ac45587973de7a51c1dfbb9473
+    ports:
+      - "9400:9400"
+    command:
+      - "--user-claims"
+      - '{"sub": "alice", "email": "alice@example.com", "name": "Alice"}'
