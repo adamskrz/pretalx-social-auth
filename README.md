@@ -35,6 +35,43 @@ Due to how Social Auth is configured with API keys in `settings.py`, this doesn'
 
 I initially looked into using [django-allauth](https://github.com/pennersr/django-allauth) instead, which allows configuring providers in the database on a per-site basis, but it also replaces the full auth model, so would be more difficult to make into a plugin!
 
+## Email-based Account Linking
+
+When a user attempts to log in via SSO for the first time, the plugin checks if a user with the same email address already exists in the database. The behavior in this situation is controlled by the **TRUST_IDP_EMAILS** global setting.
+
+### TRUST_IDP_EMAILS Setting
+
+This setting controls whether the operator trusts all configured identity providers (IDPs) to authenticate users:
+
+- **Disabled (Default - Secure)**: Users logging in via SSO for the first time will be rejected if an account with that email already exists. The user will be shown an error message instructing them to log in with their existing credentials first, then connect their social account from their profile settings.
+
+- **Enabled (Trust IDPs)**: Users logging in via SSO for the first time will be automatically linked to existing accounts with the same email address. This provides a seamless experience when users already have an account and want to use SSO.
+
+### Security Considerations
+
+The default is **disabled** for security reasons:
+
+- It prevents unauthorized access if an attacker compromises an email account and creates a social login with a provider
+- It ensures explicit user consent before linking accounts
+- It's safer when you cannot fully trust all configured identity providers
+
+Enable this setting only when:
+
+- You fully trust all configured identity providers to properly verify email addresses
+- Your IDPs enforce email verification
+- You want to prioritize user convenience over strict account separation
+
+### Configuration
+
+This is a global setting configured in your `pretalx.cfg` file. Add it to the `[plugin:pretalx_social_auth]` section:
+
+```ini
+[plugin:pretalx_social_auth]
+TRUST_IDP_EMAILS=true
+```
+
+The current configuration and list of enabled identity providers can be viewed in the organizer interface under "pretalx Social Auth plugin Settings".
+
 ## Development setup
 
 1. Make sure that you have a working [pretalx development setup](https://docs.pretalx.org/en/latest/developer/setup.html).
