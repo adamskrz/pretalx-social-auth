@@ -4,6 +4,54 @@
 {% block extra_title %}pretalx Social Auth plugin Settings :: {% endblock extra_title %}
 
 {% block content %}
-    <h2>pretalx Social Auth plugin Settings</h2>
-    {% include "orga/includes/base_form.html" %}
+    <h2>{% trans "pretalx Social Auth plugin Settings" %}</h2>
+
+    <div class="alert alert-info">
+        <div>
+            {% blocktranslate trimmed %}
+            The Social Auth plugin configuration is managed globally via your pretalx.cfg file, not through the organizer interface.
+            To configure identity providers and trust settings, edit the [plugin:pretalx_social_auth] section in your pretalx.cfg.
+            {% endblocktranslate %}
+        </div>
+    </div>
+
+    {% if idps %}
+        <h3>{% trans "Configured Identity Providers" %}</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{% trans "Provider Name" %}</th>
+                    <th>{% trans "Backend" %}</th>
+                    <th>{% trans "Implementation" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for idp in idps %}
+                    <tr>
+                        <td>{{ idp.name }}</td>
+                        <td><code>{{ idp.backend_name }}</code></td>
+                        <td><code>{{ idp.module }}.{{ idp.class }}</code></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>{% trans "Email Trust Setting" %}</h3>
+        <p>
+            {% trans "The TRUST_IDP_EMAILS setting controls whether users can be automatically linked to existing accounts based on email addresses." %}
+        </p>
+        <ul>
+            <li><strong>{% trans "Default (Disabled)" %}:</strong> {% trans "Users logging in via SSO for the first time will be rejected if an account with that email already exists. They must log in with existing credentials first, then connect their social account from their profile." %}</li>
+            <li><strong>{% trans "Enabled" %}:</strong> {% trans "Users logging in via SSO will be automatically linked to existing accounts with the same email address (only if you fully trust all configured identity providers)." %}</li>
+        </ul>
+        <p>
+            {% trans "To enable email trust, add this to your pretalx.cfg:" %}
+        </p>
+        <pre>[plugin:pretalx_social_auth]
+TRUST_IDP_EMAILS=true</pre>
+    {% else %}
+        <div class="alert alert-warning">
+            <p>{% trans "No identity providers are currently configured. Add backends to the [authentication] section in your pretalx.cfg file." %}</p>
+        </div>
+    {% endif %}
 {% endblock content %}

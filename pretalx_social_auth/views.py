@@ -3,14 +3,13 @@ from django.contrib.auth import REDIRECT_FIELD_NAME, login
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.views.generic import FormView
+from django.views.generic import TemplateView
 from pretalx.common.views.mixins import PermissionRequired
 from social_core.actions import do_auth, do_complete, do_disconnect
 
-from .forms import SocialAuthSettingsForm
-from .utils import maybe_require_post, psa
+from .utils import all_backends, backend_friendly_name, maybe_require_post, psa
 
 NAMESPACE = "plugins:pretalx_social_auth"
 
@@ -19,28 +18,27 @@ NAMESPACE = "plugins:pretalx_social_auth"
 DEFAULT_SESSION_TIMEOUT = None
 
 
-class SocialAuthSettingsView(PermissionRequired, FormView):
-    permission_required = "orga.change_settings"
+# class SocialAuthSettingsView(PermissionRequired, TemplateView):
+class SocialAuthSettingsView(TemplateView):
+    permission_required = "event.update_event"
     template_name = "pretalx_social_auth/settings.html"
-    form_class = SocialAuthSettingsForm
 
-    def get_success_url(self):
-        return self.request.path
-
-    def get_object(self):
-        return self.request.event
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["event"] = self.request.event
-        return kwargs
-
-    def form_valid(self, form):
-        form.save()
-        messages.success(
-            self.request, _("The pretalx Social Auth plugin settings were updated.")
-        )
-        return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get all configured backends and their friendly names
+        backends = all_backends()
+        context['idps'] = [
+            {
+                'name': backend_friendly_name(backend_name),
+                'backend_name': backend_name,
+                'module': backend_class.__module__,
+                'class': backend_class.__name__,
+            }
+            for backend_name, backend_class in backends.items()
+        ]
+        # Sort by friendly name for better readability
+        context['idps'] = sorted(context['idps'], key=lambda x: x['name'])
+        return context
 
 
 @never_cache
@@ -70,7 +68,7 @@ def complete(request, backend, *args, **kwargs):
 @login_required
 @psa()
 @require_POST
-@csrf_protect
+@csrf_exempt
 def disconnect(request, backend, association_id=None):
     """Disconnects given backend from current logged in user."""
     return do_disconnect(
