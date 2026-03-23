@@ -1,6 +1,6 @@
 services:
   devcontainer:
-    image: ghcr.io/tjarbo/pretalx-devcontainer/devcontainer:main
+    image: ghcr.io/tjarbo/pretalx-devcontainer/devcontainer:v2
     network_mode: "service:oidc-provider-mock"
     volumes:
       - ../:/workspace:cached
@@ -12,4 +12,4 @@ services:
       - "9400:9400"
     command:
       - "--user-claims"
-      - '{"sub": "alice", "email": "alice@example.com", "name": "Alice"}'
+      - '{"sub": "alice", "email": "alice@dev.pretalx.local", "name": "Alice"}'

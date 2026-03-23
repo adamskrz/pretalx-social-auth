@@ -12,7 +12,7 @@
     "PRETALX_CONFIG_FILE": "${containerWorkspaceFolder}/.devcontainer/pretalx.cfg",
     "DJANGO_SUPERUSER_EMAIL": "superuser@pretalx.local",
     "DJANGO_SUPERUSER_PASSWORD": "pretalx",
-    "PRETALX_INIT_ORGANISER_NAME": "The Organisers",
+    "PRETALX_INIT_ORGANISER_NAME": "The Organizers",
     "PRETALX_INIT_ORGANISER_SLUG": "localorg",
   },
   "customizations": {
