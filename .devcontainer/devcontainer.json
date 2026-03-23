@@ -1,0 +1,30 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+  "name": "pretalx-devcontainer",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "devcontainer",
+  "workspaceFolder": "/workspace",
+  "postCreateCommand": "/opt/pretalx-devcontainer/default-scripts/plugin-development/post-create.sh && ${containerWorkspaceFolder}/.devcontainer/post-create.sh",
+  "postStartCommand": "/opt/pretalx-devcontainer/default-scripts/plugin-development/post-start.sh && ${containerWorkspaceFolder}/.devcontainer/post-start.sh",
+  "containerEnv": {
+    "PRETALX_DATA_DIR": "${containerWorkspaceFolder}/.devcontainer/local",
+    "PRETALX_CONFIG_FILE": "${containerWorkspaceFolder}/.devcontainer/pretalx.cfg",
+    "DJANGO_SUPERUSER_EMAIL": "superuser@pretalx.local",
+    "DJANGO_SUPERUSER_PASSWORD": "pretalx",
+    "PRETALX_INIT_ORGANISER_NAME": "The Organizers",
+    "PRETALX_INIT_ORGANISER_SLUG": "localorg",
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.debugpy"
+      ]
+    }
+  },
+  "forwardPorts": [
+    8000,
+    9400
+  ]
+}
